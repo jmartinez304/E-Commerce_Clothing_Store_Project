@@ -1,0 +1,56 @@
+.container-Fields {
+    width: 60%;
+    margin: 0 auto;
+    padding-top: 60px;
+    text-align: center;
+}
+
+.checkout-Input {
+    width: 300px;
+    height: 40px;
+    border-radius: 3px;
+    border: 1px solid #ccc;
+    outline-color: #aaa;
+    margin-right: 40px;
+}
+
+.sec1-checkout {
+    height: auto;    
+    background-color: white;
+    padding: 80px;
+    overflow: hidden;
+    padding-top: 130px;
+}
+
+.submitButton {
+    width: 120px;
+    height: 35px;
+    background-color: #161d27;
+    cursor: pointer;
+    border: none;
+    outline-color: #aaa;
+    text-align: center;
+    font-family: 'Montserrat', sans-serif;
+    color: white;
+    border-radius: 3px;
+}
+
+.submitButton:hover {
+    background-color: black;
+    color: white;
+    -webkit-transition: all 0.2s linear;
+    -moz-transition: all 0.2s ease;
+    -ms-transition: all 0.2s ease;
+    -o-transition: all 0.2s ease;
+    transition: all 0.2s ease;
+}
+
+input {
+    padding: 12px 15px;
+    box-sizing: border-box;  
+    font-family: 'Montserrat', sans-serif;
+}
+
+input::placeholder {
+    font-family: 'Montserrat', sans-serif;
+}
