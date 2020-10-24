@@ -1,7 +1,7 @@
 <?php
-//session_start([
-//    'cookie_lifetime' => 86400,
-//]);
+session_start([
+    'cookie_lifetime' => 86400,
+]);
 require 'db.php';
 ?>
 <!DOCTYPE html>
@@ -13,14 +13,31 @@ require 'db.php';
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
-    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
-
+    <script src="js/jquery.js"></script>
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="css/sections.css">
+    <link rel="stylesheet" href="css/checkout.css">
     <link rel="stylesheet" href="css/font_styles.css">
+    <style>
+        @media print {
+            #print {
+                display: none;
+            }
+
+            #makeAnotherOrder {
+                display: none;
+            }
+
+            table, td.receipt {
+                width: 500px;
+                margin: 0 auto;
+            }
+
+            header, footer {
+                display: none;
+            }
+        }
+    </style>
 </head>
 <body>
 <header>
@@ -28,10 +45,7 @@ require 'db.php';
         <nav class="fixNav">
             <span id="home" class="fixSpan">Signature Sports Clothing</span>
             <ul>
-                <li><a href="home.html">Home</a></li>
-                <li><a href="about.html">About</a></li>
-                <li><a href="all-products-tab.php" style="color: khaki;">Order Now</a></li>
-                <li><a href="contact.html">Contact</a></li>
+                <li><a href="index.php" style="color: khaki;">Order Now</a></li>
             </ul>
         </nav>
     </div>

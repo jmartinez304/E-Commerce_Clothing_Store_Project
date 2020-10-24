@@ -1,6 +1,6 @@
 <div class="container-Menu">
     <div class="container-Tabs">
-        <a class="tabs" href="all-products-tab.php" style="background-color: khaki;">All Products</a>
+        <a class="tabs" href="all-products-tab.php" style="background-color: khaki;">Products</a>
         <a class="tabs" href="cart-tab.php">Cart <span class="badge">
                     <?php if (isset($_SESSION["shopping_cart"])) {
                         echo count($_SESSION["shopping_cart"]);
@@ -14,11 +14,14 @@
         <?php
         require 'db.php';
         $product_id = 0;
-        $icount = 0; //Row variable
-        $jcount = 0; //Column variable
+        $color_icount = 0; //Color Row variable
+        $color_jcount = 0; //Color Column variable
+        $size_icount = 0; //Size Row variable
+        $size_jcount = 0; //Size Column variable
         $sizes = array();
         $colors = array();
 
+        /* Retrieving each items available sizes */
         $querySizes = '
 SELECT distinct  products.product_id, products.product_name, sizes.size_id, sizes.size_name
 FROM products
@@ -28,31 +31,24 @@ JOIN sizes
 ON variations.size_id = sizes.size_id
 ORDER BY  product_id, size_id';
 
-        /* Query the database for colors */
         if ($result = $mysqli->query($querySizes)) {
-            // Verify that there are more than 0 rows
             if ($result->num_rows > 0) {
-                // Fetch and print associated rows
-
                 while ($row = $result->fetch_assoc()) {
                     // print_r($product);
                     if ($row['product_id'] != $product_id) {
-                        $jcount = 0;
-                        $icount++;
-                        $sizes[$icount][$jcount] = $row['size_name'];
+                        $size_jcount = 0;
+                        $size_icount++;
+                        $sizes[$size_icount][$size_jcount] = $row['size_name'];
                         $product_id = $row['product_id'];
                     } else {
-                        $jcount++;
-                        $sizes[$icount][$jcount] = $row['size_name'];
+                        $size_jcount++;
+                        $sizes[$size_icount][$size_jcount] = $row['size_name'];
                     }
                 }
             }
         }
 
-        /* Reset the row and column variables */
-        $icount = 0;
-        $jcount = 0;
-
+        /* Retrieving each items available colors */
         $query = '
 SELECT distinct categories.category_name, products.product_id, products.product_name, products.product_price, products.product_default_picture, colors.color_name
 FROM categories
@@ -63,31 +59,42 @@ ON products.product_id = variations.product_id
 JOIN colors
 ON variations.color_id = colors.color_id';
 
-        /* Query the database for colors */
-        if ($result = $mysqli->query($query)) {
-            // Verify that there are more than 0 rows
-            if ($result->num_rows > 0) {
-                // Fetch and print associated rows
+        $product_id = 0;
 
+        if ($result = $mysqli->query($query)) {
+            if ($result->num_rows > 0) {
                 while ($row = $result->fetch_assoc()) {
                     // print_r($product);
                     if ($row['product_id'] != $product_id) {
-                        $jcount = 0;
-                        $icount++;
-                        $colors[$icount][$jcount] = $row['color_name'];
+                        $color_jcount = 0;
+                        $color_icount++;
+                        $colors[$color_icount][$color_jcount] = $row['color_name'];
                         $product_id = $row['product_id'];
                     } else {
-                        $jcount++;
-                        $colors[$icount][$jcount] = $row['color_name'];
+                        $color_jcount++;
+                        $colors[$color_icount][$color_jcount] = $row['color_name'];
                     }
                 }
+            }
+        }
 
 
-                /* Query the database to display the products */
+        /* Display all products in the database */
+        $query = '
+SELECT distinct categories.category_name, products.product_id, products.product_name, products.product_price, products.product_default_picture
+FROM categories
+JOIN products
+ON categories.category_id = products.category_id
+JOIN variations
+ON products.product_id = variations.product_id';
+
+        require 'query_fetch.php';
+
+        if ($result = $mysqli->query($query)) {
+            if ($result->num_rows > 0) {
                 mysqli_data_seek($result, 0);
                 $product_id = 0;
                 while ($row = $result->fetch_assoc()) {
-                    // print_r($product);
 
                     if ($row['product_id'] != $product_id) {
 
@@ -101,14 +108,6 @@ ON variations.color_id = colors.color_id';
 
                                 <h3 class="product-title"><?php echo $row['product_name']; ?></h3>
 
-                                <!--                                <button class="accordion">View details &darr;</button>-->
-                                <!--                                <div class="panel">-->
-                                <!--                                    <p class="product-desc" id="viewdetails-->
-                                <?php //echo $row['category_name'];
-                                //                                    echo $row['product_id']; ?><!--">-->
-                                <?php //echo $row['Product_Description']; ?><!--</p>-->
-                                <!--                                </div>-->
-
                                 <h3 class="tPrice">$ <?php echo $row['product_price']; ?></h3>
 
                                 <div id="sizes-dropwdown">
@@ -116,12 +115,12 @@ ON variations.color_id = colors.color_id';
 
                                     <select id="size<?php echo $row['product_id']; ?>" name="sizes">
                                         <?php
-                                        $rowProductId = $row['product_id'];
-                                        $sizesArrayCount = count($sizes[$rowProductId]);
+                                        $row_product_id = $row['product_id'];
+                                        $sizes_array_count = count($sizes[$row_product_id]);
 
-                                        for ($col = 0; $col < $sizesArrayCount; $col++) {
-                                            $sizesArrayEntry = $sizes[$rowProductId][$col];
-                                            echo "<option value=" . $sizesArrayEntry . ">" . $sizesArrayEntry . "</option>";
+                                        for ($col = 0; $col < $sizes_array_count; $col++) {
+                                            $sizes_array_entry = $sizes[$row_product_id][$col];
+                                            echo "<option value=" . $sizes_array_entry . ">" . $sizes_array_entry . "</option>";
                                         }
                                         ?>
                                     </select>
@@ -134,12 +133,12 @@ ON variations.color_id = colors.color_id';
 
                                     <select id="color<?php echo $row['product_id']; ?>" name="colors">
                                         <?php
-                                        $rowProductId = $row['product_id'];
-                                        $colorsArrayCount = count($colors[$rowProductId]);
+                                        $row_product_id = $row['product_id'];
+                                        $colors_array_count = count($colors[$row_product_id]);
 
-                                        for ($col = 0; $col < $colorsArrayCount; $col++) {
-                                            $colorsArrayEntry = $colors[$rowProductId][$col];
-                                            echo "<option value=" . $colorsArrayEntry . ">" . $colorsArrayEntry . "</option>";
+                                        for ($col = 0; $col < $colors_array_count; $col++) {
+                                            $colors_array_entry = $colors[$row_product_id][$col];
+                                            echo "<option value=" . $colors_array_entry . ">" . $colors_array_entry . "</option>";
                                         }
                                         ?>
                                     </select>

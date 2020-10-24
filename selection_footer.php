@@ -1,26 +1,103 @@
-<footer>
-    <div class="line"></div>
-    <div class="info-container">
-        <span class="logo">Signature Sports Clothing</span>
-        <span class="info-footer">701 N Econlockhatchee Trail, Orlando, FL 32825</span>
+<?php
+require 'footer.php';
+?>
 
-        <span class="title-footer">Email: <span style="color: rgba(255, 255, 255, 0.45); text-transform: lowercase;">signaturesportsclothing@email.com</span></span>
-        <span class="title-footer">Phone: <span
-                    style="color: rgba(255, 255, 255, 0.45);">+1 (407) 299-5000</span></span>
-    </div>
+<!-- jQuery -->
 
-    <div class="line" style="margin-top: 30px;"></div>
+<script>
 
-    <div class="copy-container">
-        <span class="copyright">&copy; Signature Sports Clothing 2020. All rights reserved.</span>
-    </div>
+    /* Adding item to cart */
+    $(document).ready(function (data) {
+        $('.add_to_cart').click(function () {
+            var product_id = $(this).attr("id");
+            var product_name = $('#name' + product_id).val();
+            var product_price = $('#price' + product_id).val();
+            var product_color = $('#color' + product_id).val();
+            var product_size = $('#size' + product_id).val();
+            var product_quantity = Math.round(($('#quantity' + product_id).val()).replace(/[^1-9\.]/g, ''));
+            var action = "add";
+            if (product_quantity > 0) {
+                $.ajax({
+                    url: "action.php",
+                    method: "POST",
+                    dataType: "json",
+                    data: {
+                        product_id: product_id,
+                        product_name: product_name,
+                        product_price: product_price,
+                        product_quantity: product_quantity,
+                        product_color: product_color,
+                        product_size: product_size,
+                        action: action
+                    },
+                    success: function (data) {
+                        $('#order_table').html(data.order_table);
+                        $('.badge').text(data.cart_item);
+                        alert("Product has been added into Cart");
+                    },
+                    error: function (data) {
+                        alert("This item is not available with this size and color");
+                    }
+                });
+            } else {
+                alert("Please enter number of quantity");
+            }
+        });
 
-    <div class="warning-container">
-        <p>This page is for a college project and is
-            not a real website. We and Valencia College do not own or are making any money off from anything included in
-            the website including images and backgrounds. This website has been made for educational purposes only.
-        </p>
-    </div>
-</footer>
-</body>
-</html>
+        /* Deleting item from cart */
+        $(document).on('click', '.delete', function () {
+            var product_id = $(this).data("product_id");
+            var product_color = $(this).data("product_color");
+            var product_size = $(this).data("product_size");
+            var action = "remove";
+            if (confirm("Are you sure you want to remove this product?")) {
+                $.ajax({
+                    url: "action.php",
+                    method: "POST",
+                    dataType: "json",
+                    data: {
+                        product_id: product_id,
+                        product_color: product_color,
+                        product_size: product_size,
+                        action: action
+                    },
+                    success: function (data) {
+                        $('#order_table').html(data.order_table);
+                        $('.badge').text(data.cart_item);
+                    }
+                });
+            } else {
+                return false;
+            }
+        });
+
+        /* Changing quantity of cart item */
+        $(document).on('keyup', '.quantity', function () {
+            var product_id = $(this).data("product_id");
+            var quantity = ($(this).val()).replace(/[^0-9\.]/g, '');
+            var product_color = $(this).data("product_color");
+            var product_size = $(this).data("product_size");
+            var action = "quantity_change";
+            if (quantity != '' && quantity > 0) {
+                $.ajax({
+                    url: "action.php",
+                    method: "POST",
+                    dataType: "json",
+                    data: {
+                        product_id: product_id,
+                        quantity: quantity,
+                        product_color: product_color,
+                        product_size: product_size,
+                        action: action
+                    },
+                    success: function (data) {
+                        $('#order_table').html(data.order_table);
+                    }
+                });
+            } else {
+                alert("Please enter number of quantity");
+            }
+        });
+    })
+    ;
+</script>
